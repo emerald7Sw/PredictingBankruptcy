@@ -68,7 +68,7 @@ ggplot(BankDen) +
 
 ggplot(BankDen) +
   geom_density(alpha = .5, aes(x=BankDen$R12, fill=as.factor(BankDen$D))) +
-  labs(x= "CURDEBT/DEBTS", y= "density", fill="Bankruptcy") 
+  labs(x= "CURASS/DEBTS", y= "density", fill="Bankruptcy") 
 
 ggplot(BankDen) +
   geom_density(alpha = .5, aes(x=BankDen$R13, fill=as.factor(BankDen$D))) +
@@ -260,7 +260,7 @@ confusionMatrix(as.factor(ifelse(predict.value > 0.5, 1, 0)),
 
 ggplot(valid.df)+
   geom_roc(aes(d = valid.df$D, m = predict.value))+
-  labs(title= "ROC Curve", x="1-Specificty", y=" Sensitivity")
+  labs(title= "ROC Curve - Cash To Pay Debts", x="1-Specificty", y=" Sensitivity")
 
 #Debt Structure
 train2.id <- sample(c(1:dim(Bank.df)[1]), dim(Bank.df)[1]*0.6)
@@ -278,7 +278,7 @@ confusionMatrix(as.factor(ifelse(predict.value2 > 0.5, 1, 0)),
 
 ggplot(valid2.df)+
   geom_roc(aes(d = valid2.df$D, m = predict.value2))+
-  labs(title= "ROC Curve", x="1-Specificty", y=" Sensitivity")
+  labs(title= "ROC Curve - Debt Structure", x="1-Specificty", y=" Sensitivity")
 
 #Generation of Current Assets
 train3.id <- sample(c(1:dim(Bank.df)[1]), dim(Bank.df)[1]*0.6)
@@ -296,7 +296,7 @@ confusionMatrix(as.factor(ifelse(predict.value3 > 0.5, 1, 0)),
 
 ggplot(valid3.df)+
   geom_roc(aes(d = valid3.df$D, m = predict.value3))+
-  labs(title= "ROC Curve", x="1-Specificty", y=" Sensitivity")
+  labs(title= "ROC Curve - Generation of Current Assets", x="1-Specificty", y=" Sensitivity")
 
 #Inventory and Receivables Turnover
 train4.id <- sample(c(1:dim(Bank.df)[1]), dim(Bank.df)[1]*0.6)
@@ -314,7 +314,7 @@ confusionMatrix(as.factor(ifelse(predict.value4 > 0.5, 1, 0)),
 
 ggplot(valid4.df) +
   geom_roc(aes(d = valid4.df$D, m = predict.value4))+
-  labs(title= "ROC Curve", x="1-Specificty", y=" Sensitivity")
+  labs(title= "ROC Curve - Inv. and Receivables Turnover", x="1-Specificty", y=" Sensitivity")
 
 #Sales Generation
 train5.id <- sample(c(1:dim(Bank.df)[1]), dim(Bank.df)[1]*0.6)
@@ -332,7 +332,7 @@ confusionMatrix(as.factor(ifelse(predict.value5 > 0.5, 1, 0)),
 
 ggplot(valid5.df) +
   geom_roc(aes(d = valid5.df$D, m = predict.value5))+
-  labs(title= "ROC Curve", x="1-Specificty", y=" Sensitivity")
+  labs(title= "ROC Curve - Sales Generation", x="1-Specificty", y=" Sensitivity")
 
 #Asset Flow Measures
 train6.id <- sample(c(1:dim(Bank.df)[1]), dim(Bank.df)[1]*0.6)
@@ -350,6 +350,22 @@ confusionMatrix(as.factor(ifelse(predict.value6 > 0.5, 1, 0)),
 
 ggplot(valid6.df) +
   geom_roc(aes(d = valid6.df$D, m = predict.value6))+
-  labs(title= "ROC Curve", x="1-Specificty", y=" Sensitivity")
+  labs(title= "ROC Curve - Asset Flow Measures", x="1-Specificty", y=" Sensitivity")
 
+#All Significant Variables
+train7.id <- sample(c(1:dim(Bank.df)[1]), dim(Bank.df)[1]*0.6)
+train7.df <- Bank.df[train7.id, ]
+valid7.df <- Bank.df[-train7.id, ]
 
+predictBank7 = glm(D~R3+R4+R9+R10+R21+R22, data=train7.df, family = "binomial")
+
+summary(predictBank7)
+
+predict.value7 = predict(predictBank7, valid7.df, type= "response")
+
+confusionMatrix(as.factor(ifelse(predict.value7 > 0.5, 1, 0)),
+                as.factor(valid7.df$D), positive = "1")
+
+ggplot(valid7.df) +
+  geom_roc(aes(d = valid7.df$D, m = predict.value7))+
+  labs(title= "ROC Curve - All Significant Variables", x="1-Specificty", y=" Sensitivity")
